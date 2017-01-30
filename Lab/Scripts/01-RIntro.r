@@ -17,6 +17,7 @@ a
 b<-c(3,4,5)   # 'c' combines values into vector or list
 b
 b[2]	#access items in vectors by calling their position
+      #single bracket is for arrays, double bracket is for lists
 
 a <- rnorm(50) #generate random normal vector
 b <- rnorm(a)
@@ -73,13 +74,14 @@ c*b
 a%*%b		## %*% is symbol for matrix multiplication
 b%*%a		## matrix order matters
 	
-rm(list=ls())
+rm(list=ls()) #empties environment
 
 
 gl(2,10)	#Generate levels of a factor
+          #First number is number of levels, second number is how many factors
 
 ## Read data
-mydata<-read.csv(file="Data/Lab-01-RIntroData.csv",header=T)
+mydata<-read.csv(file="01-RIntroData.csv",header=T)
 mydata
 Y<-as.matrix(mydata[,(2:3)])
 FactorA<-as.factor(mydata[,4])
@@ -91,7 +93,7 @@ apply(Y,2,sd)    #here, we obtain the std for each column of a matrix
 
 tapply(Y[,1],FactorA,mean)	#Obtain means for first column for levels of FactorA
 tapply(Y[,2],FactorA,mean)	#Obtain means for first column for levels of FactorA
-tapply(Y,FactorA,mean)		#Try entire matrix: doesn't work
+tapply(Y,FactorA,mean)		#Try entire matrix: doesn't work, R likes column by column
 
 rowsum(Y, FactorA)/as.vector(table(FactorA))    #This obtains means.  Could also use a loop.
 
