@@ -50,7 +50,7 @@ x <- 1:10
 #dim(x)<-c(10,1) #force dimensions to make column vector
 x
 sample(x)	# Randomize the order of locations
-sample(x,replace=FALSE)	#more explicit
+sample(x,replace=FALSE)	#more explicit; if make replace=TRUE turns into bootstrapping!
 sample(x,(length(x)-2),replace=FALSE)	#sub-sample
 
 #__________________________________________________________________________#
