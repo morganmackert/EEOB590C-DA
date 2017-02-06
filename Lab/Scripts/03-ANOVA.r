@@ -3,8 +3,8 @@
 
 
 rm(list=ls())
-bumpus<-read.csv("Data/bumpus.csv",header=T)
-bumpus.data<-log(as.matrix(bumpus[,(5:13)])) # matrix of log-linear measurements
+bumpus<-read.csv("~/ISU/Semester 4/Biostats/EEOB590C-DA/Lab/Data/bumpus.csv",header=T)
+bumpus.data<-log(as.matrix(bumpus[,(5:13)])) #log transform into matrix of log-linear measurements
 sex<-as.factor(bumpus[,2])
 surv<-as.factor(bumpus[,4])
 SexBySurv<-as.factor(paste(sex,surv))
@@ -14,7 +14,7 @@ SexBySurv<-as.factor(paste(sex,surv))
 #  Some components of the linear model
 model1<-lm(TotalLength~sex)
 anova(model1)  	#Statistical summary
-predict(model1)		#Predicted values
+predict(model1)		#Predicted values (Predicted values are the group means)
 resid(model1)		#Residuals
 
 ## Multi-group histogram
@@ -57,8 +57,8 @@ procD.lm(TotalLength~sex*surv)
 
 ###NOTE: pairwise comparison interpretations can change when using different
   #null models
-advanced.procD.lm(TotalLength~sex*surv, ~ sex + surv, groups = ~sex*surv)
-advanced.procD.lm(TotalLength~sex*surv, ~ 1, groups = ~sex*surv)
+advanced.procD.lm(TotalLength~sex*surv, ~ sex + surv, groups = ~sex*surv) #correct
+advanced.procD.lm(TotalLength~sex*surv, ~ 1, groups = ~sex*surv)          #incorrect
 #  First uses RRPP for sequential models, 2nd uses grand mean (Y~1)
   #latter pairwise comparisons equivalent to merging factors A & B
 advanced.procD.lm(TotalLength~SexBySurv, ~ 1, groups = ~SexBySurv)
