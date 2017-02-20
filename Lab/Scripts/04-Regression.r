@@ -3,7 +3,7 @@
     #packages: geomorph, lmodel2, scatterplot3d
 
 rm(list=ls())
-bumpus<-read.csv("Data/bumpus.csv",header=T)
+bumpus<-read.csv("Lab/Data/bumpus.csv",header=T)
 bumpus.data<-log(as.matrix(bumpus[,(5:13)])) # matrix of log-linear measurements
 sex<-as.factor(bumpus[,2])
 surv<-as.factor(bumpus[,4])
@@ -23,6 +23,9 @@ anova(model1)	#provides model term tests
 plot(X1,Y,pch=21, bg="black", cex=2)
 abline(model1,lwd=2,col="red")
 
+#Lots of components in model, such as:
+model1$fitted.values
+model1$residuals
 
 ##### Distance-based MANOVA + randomization
 library(geomorph)
@@ -30,7 +33,8 @@ procD.lm(Y~X1)
 
 #Additional Diagnostic plots
 plot(model1)
-	#plot 1: fitted vs. residuals (structure in plot BAD)
+	
+  #plot 1: fitted vs. residuals (structure in plot BAD)
 	#plot 2: residual quantiles (near line GOOD)
 	#plot 3: fitted vs. sqrt resid (in a triangle BAD)
 	#plot 4: cooks distance (identify points with high leverage)
@@ -54,8 +58,10 @@ anova(lm(Y~X1+X2))
 library(scatterplot3d)
 plot<-scatterplot3d(X1,X2,Y)
 plot$plane3d(lm(Y~X1+X2))
+cor(X1,X2) #To find correlation between X1 and X2
 
-#__________________________________________________________________________##polynomial regression
+#_________________________________________________________________________#
+#polynomial regression
 summary(lm(Y~X1+I(X1^2)))	#NOTE: 'I' identity matrix and 'allows' function sqr to be used 
 anova(lm(Y~X1+I(X1^2)))
 
@@ -78,6 +84,7 @@ model.ancova<-lm(Y~X2+SexBySurv)
 colo<-rep("blue",nrow(bumpus.data)); colo[which(SexBySurv == 'f TRUE')]<-"red";
 	colo[which(SexBySurv == 'f FALSE')]<-"pink"; colo[which(SexBySurv == 'm FALSE')]<-"lightblue";
 
+#These create a graphical representation of an ANCOVA
 plot(X2,Y,pch=21,cex=2,bg=colo)
 abline(model.ancova$coefficients[1],model.ancova$coefficients[2])
 abline((model.ancova$coefficients[1]+model.ancova$coefficients[3]),model.ancova$coefficients[2])
@@ -89,16 +96,14 @@ abline((model.ancova$coefficients[1]+model.ancova$coefficients[5]),model.ancova$
 ## SIMPLE RESAMPLING EXAMPLE
 F.obs<-anova(lm(Y~X1))$F[[1]]  #Find Test value and save
 permute<-999
-P.Ftest<-1
-F.rand.vec<-NULL
-F.rand.vec<-rbind(F.rand.vec,F.obs)
+F.rand.vec<-array(NA,(permute+1))
+F.rand.vec[perumute+1]<-F.obs
 for(i in 1:permute){
   ###Shuffle Data
 	y.rand<-sample(Y)	#Resample vector 
-	F.rand<-anova(lm(y.rand~X1))$F[[1]]  
-	F.rand.vec<-rbind(F.rand.vec,F.rand)
-	P.Ftest<-if(F.rand>=F.obs) (P.Ftest+1) else P.Ftest
-}  
+	F.rand.vec[i]<-anova(lm(y.rand~X1))$F[[1]]  
+}
+F.obs
 P.Ftest<-P.Ftest/(permute+1)
 P.Ftest
 ####Plot
