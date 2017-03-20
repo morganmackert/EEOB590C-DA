@@ -21,7 +21,7 @@ microbenchmark(mean(x),apply(x,2,mean), sum(x)/length(x),mymean(x),colSums(x)/le
 ############ Evaluating choke-points in code
 #Example
 library(aprof)
-source("pls.slow.r")
+source("7-pls.slow.r")
 tmp<-tempfile() #create tmp file for saving profiler output
 Rprof(tmp,line.profiling=TRUE)  #profile the function
 x<-matrix(rnorm(1000),ncol=10)

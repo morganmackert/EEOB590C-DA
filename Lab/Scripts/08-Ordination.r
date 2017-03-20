@@ -2,11 +2,6 @@
       #Packages: geomorph [for data], vegan, MASS
 
 rm(list=ls())
-library(geomorph)
-   data(plethodon)
-   Y.gpa<-gpagen(plethodon$land)   
-   pleth.data<-scale(two.d.array(Y.gpa$coords),scale=FALSE)  #center the data
-   gp<-factor(paste(plethodon$species,plethodon$site))
 
 ########################
 #	PCA: Principal Components Analysis
@@ -17,17 +12,17 @@ library(geomorph)
    gp<-factor(paste(plethodon$species,plethodon$site))
    
 pca.pleth<-prcomp(pleth.data)  #uses SVD for computations (mean-centered is default)
-summary(pca.pleth)
+summary(pca.pleth) #Last four are redundant; explain negligible variation
 PC.scores<-pca.pleth$x
 pca.pleth$rotation[,1]  #1st PC axis only
 
-plot(PC.scores,xlab="PC I", ylab="PC II",asp=1,pch=21,bg=gp,cex = 1.5)
+plot(PC.scores,xlab="PC I", ylab="PC II",asp=1,pch=21,bg=gp,cex = 1.5) #asp=1 is very important! Means aspect ratio = 1, without this will distort the plot.
 
 #Eigenvalue analysis via broken stick model
 library(vegan)
 screeplot(pca.pleth,bstick = TRUE)  #implies 2 PCAs sufficient graphical representation
 
-##Plot of actual vs. PC1-2 distances
+##Plot of actual (full data set) vs. PC1-2 (reduced data set) distances 
 plot(dist(pleth.data),dist(PC.scores[,1:2]))
 
 ### PCA via svd

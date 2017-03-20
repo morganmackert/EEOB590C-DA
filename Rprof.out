@@ -1,0 +1,4 @@
+sample.interval=20000
+"source" 
+"save" "save.image" "sys.save.image" 
+"file.rename" "save.image" "sys.save.image" 
