@@ -6,7 +6,7 @@ rm(list=ls())
 library(geomorph) 
 library(vegan)
 
-bumpus<-read.csv("Data/bumpus.csv",header=T)
+bumpus<-read.csv("Lab/Data/bumpus.csv",header=T)
 bumpus.data<-log(as.matrix(bumpus[,(5:13)])) # matrix of linear measurements
 sex<-as.factor(bumpus[,2])
 surv<-as.factor(bumpus[,4])
