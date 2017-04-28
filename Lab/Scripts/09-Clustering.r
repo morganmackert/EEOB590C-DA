@@ -8,13 +8,13 @@ rm(list=ls())
 ##
 #######################
 rm(list=ls())
-mole.data<-read.csv("Data/Lab-09.Moles.csv",header=T,row.names=1)
-mole.dist<-as.dist(mole.data)
+mole.data <- read.csv("Lab/Data/Lab-09.Moles.csv",header=T,row.names=1)
+mole.dist <- as.dist(mole.data)
 
 ### PCoA of mole data
-PCoA<-cmdscale(mole.dist)
-plot(PCoA,pch=21,bg='black',cex=1.5,asp=1)
-  text(PCoA[,1]+1.5,PCoA[,2],row.names(mole.data))
+PCoA <- cmdscale(mole.dist)
+plot(PCoA, pch=21, bg= 'black', cex=1.5, asp=1)
+  text(PCoA[,1] + 1.5, PCoA[,2], row.names(mole.data))
 
 #Some clustering methods
 mole.single<-hclust(mole.dist,method="single")       #Single-link

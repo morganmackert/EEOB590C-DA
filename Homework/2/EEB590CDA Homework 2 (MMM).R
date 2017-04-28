@@ -2,6 +2,8 @@
 #                   EEB 590C-DA                 #
 #                   Homework 2                  #
 #                  Lectures 6-10                #
+#          Morgan Mackert, Bryan Juarez,        #
+#          Ashely St. Clair, Nick Lyon          #
 #-----------------------------------------------#
 
 #Assignment: 
@@ -27,6 +29,7 @@ rm(list=ls())
 library(ggcorrplot)
 library(geomorph)
 library(vegan)
+library(fpc)
 
 #Read in data
 dat1 <- read.csv("Homework/2/HW2.dat1.csv",header=T)
@@ -84,33 +87,29 @@ biplot(pca.dat1)
 #                    Week 9                     #
 #                  Clustering                   #
 #-----------------------------------------------#
-#PCoA of dat1 data
-#dat2 <- dat1[-c(10:136), ]
-dat1.dist <- dist(dat1)
-dat1.PCoA <- cmdscale(dat1.dist)
-plot(dat1.PCoA, pch=21, bg= 'black', cex=1.5, asp=1)
-text(PCoA[,1] + 1.5, PCoA[,2], row.names(dat1.dist))
+summary(princomp(dat1[, 4:9])) #Summarize pc scores
+var(dat1[, 4:9]) #Check variances of original variables
+PC.scores <- prcomp(dat1[, 4:9])$x #Calculate pc scores for Y data and plot
+plot(PC.scores, asp = 1)
 
-#Clustering methods
-dat1.single <- hclust(dat1.dist, method = "single")       #Single-link
-dat1.complete <- hclust(dat1.dist, method = "complete")   #Complete-link
-dat1.upgma <- hclust(dat1.dist, method = "average")       #UPGMA = average-link
-dat1.upgmc <- hclust(dat1.dist, method = "centroid")      #UPGMC
-dat1.wpgma <- hclust(dat1.dist, method = "mcquitty")      #WPGMA
-dat1.wpgmc <- hclust(dat1.dist, method = "median")        #WPGMC
-dat1.wards <- hclust(dat1.dist, method = "ward.D")         #Ward's
+#UPGMA
+dist <- dist(PC.scores) #Obtain distance matrix for PCs
+upgma <- hclust(dist, method = "average") #UPGMA cluster analysis on distance matrix 
+plot(as.dendrogram(upgma), horiz = TRUE, lwd = 4)  #Plot cluster analysis dendrogram
 
-#Plot different clustering methods
-plot(dat1.single, hang = -1, lwd = 2)
-plot(as.dendrogram(dat1.single),horiz = TRUE, lwd = 4, xlim = c(16,-1))    #single-link
-plot(as.dendrogram(dat1.complete), horiz = TRUE, lwd = 4, xlim = c(16,-1))  #complete-link
-plot(as.dendrogram(dat1.upgma), horiz = TRUE, lwd = 4, xlim = c(16,-1))     #UPGMA
-plot(as.dendrogram(dat1.wpgma), horiz = TRUE, lwd = 4, xlim = c(16,-1))     #WPGMA
-plot(as.dendrogram(dat1.upgmc),horiz=TRUE,lwd=4,xlim=c(16,-1))     #UPGMC
-plot(as.dendrogram(dat1.wpgmc),horiz=TRUE,lwd=4,xlim=c(16,-1))     #WPGMC
-plot(as.dendrogram(dat1.wards),horiz=TRUE,lwd=4,xlim=c(16,-1))     #Ward's
+#K-means
+#Calculate Calinski-Harabasz index within:between group variance index for different number of clusters
+CI <- array(dim = c(1, 10)) 
+for(i in 2:12){
+  kclusters <- kmeans(PC.scores, i)
+  CI[i - 1] <- calinhara(dist, kclusters$cluster) 
+}
+plot(2:12, CI) #Plot index for different number of clusters
 
-plot(dat1.dist,cophenetic(dat1.upgma))
+plot(PC.scores[, 1:2], col = kmeans(PC.scores, 3)$cluster, asp = 1) #Plot clusters on PCs
+prcomp(dat1[, 4:9])$rotation #Check which linear combination of original varibales may help distinguish among groups
+
+#Here we formed clusters based on the PCs of the original Y data in dataset 1. We note that the variance of Y1 is much larger than the variance of any of the other Y variables. Depending on the aim of the study, we might want to scale our variables, or not. However, we proceeded with cluster analysis on these data without scaling it. We then calculated distances between individuals and performed a UPGMA cluster analysis and formed a dendrogram. Visual examination of dendrogram shows that 2-5 clusters may be useful. We then calculated the Calinski Harabasz index for each step of the cluster analysis (2-12 clusters). This analysis showed that 3, 5, 6, and, particularly 8 clusters result in the highest within:between group variance. For simplicity, here we analyze the 3-cluster solution. Labeling points in PC space according to group membership in the 3-cluster solution shows that the difference between groups is well-summarized by differences in PC1, but not so well by differences in PC2. We found that this pattern is due to the fact that Y1 loads highly on PC1 whereas the rest of the variables do not. Therefore, PC1 is a contrast between Y1 and all other variables. In summary, the simplest interpretation of this dataset is that there are about 3 groups of observations in our data which are easily identifiable using PC1. Should we want to analyze this dataset while accounting for the large variance in Y1, we must simply rescale our original variables or even perform principal components analysis on the correlation matrix of our variables.
 
 #-----------------------------------------------#
 #                   Week 10                     #
@@ -143,26 +142,3 @@ plot(x1.1.pls) #Association of Y1 with X3 (X1 = 1)
 #perANOVA further supports that the relationship of X3 with Y1 does not vary as a function of X1
 procD.lm(Y1 ~ X3 * X1, data = dat1)
 #Nonsignificant interaction term
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
