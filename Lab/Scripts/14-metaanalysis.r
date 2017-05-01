@@ -2,7 +2,7 @@
     #Packages: metafor 
 
 library(metafor)
-mydata<-read.csv("Data/Lab-14-gur_hedge.csv",header=T)
+mydata<-read.csv("Lab/Data/Lab-14-gur_hedge.csv",header=T)
 habitat<-mydata[,(1)]
 effectd<-as.matrix(mydata[,(2)])                                                             
 var<-as.matrix(mydata[,(4)])
